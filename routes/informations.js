@@ -31,6 +31,8 @@ router.get('/:id', ensureAuth, async (req, res) => {
         return res.render('error/404.hbs');
       }
 
+      console.log(information);
+
       res.render('informations/show.hbs', {
         information,
       });

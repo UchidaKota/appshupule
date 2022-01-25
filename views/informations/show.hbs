@@ -21,7 +21,30 @@
             </div>
         </div>
     </div>
-    <div>
-        <p>チャット</p>
+    <div class="col s12 m10">
+        <h4>コメント</h4>
+        <div class="card information">
+            <div class="card-content">
+                <p>コメントはまだありません</p>
+                <form id="chatForm">
+                    <div class="row">
+                        <div class="input-field">
+                            <input type="text" id="comment" name="comment">
+                            <label for="comment">コメント入力</label>
+                            <input type="submit" value="投稿" class="btn">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script> 
+    const informationid =  "{{information._id}}";
+    const userid =  "{{information.user._id}}";
+</script>
+
+<script src="/js/socket.js"></script>

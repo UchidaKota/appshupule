@@ -7,6 +7,8 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 const methodOverride = require('method-override');
+const http_socket = require('http').Server(app);
+const io_socket = require('socket.io')(http_socket);
 
 dotenv.config();
 require('./config/passport')(passport);
@@ -71,4 +73,19 @@ app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/informations', require('./routes/informations'));
 
-app.listen(3000, () => console.log("server run and up"));
+http_socket.listen(3000, () => console.log("server run and up"));
+
+io_socket.on('connection', function(socket){
+    console.log('connected');
+    socket.on('c2s-join', function(msg){
+        socket.join(msg.auction);
+    });
+    socket.on('c2s-chat', function(msg){
+        values = [
+            msg.informationid,
+            msg.userid,
+            msg.comment
+        ];
+        console.log(values);
+    });
+});
