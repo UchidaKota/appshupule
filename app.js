@@ -67,6 +67,7 @@ app.use(function (req, res, next) {
 
 //Static folder
 app.use(express.static(__dirname + '/public', {index: false}));
+app.use(express.static(__dirname + '/views', {index: false}));
 
 //Routes
 app.use('/', require('./routes/index'));
@@ -78,14 +79,25 @@ http_socket.listen(3000, () => console.log("server run and up"));
 io_socket.on('connection', function(socket){
     console.log('connected');
     socket.on('c2s-join', function(msg){
-        socket.join(msg.auction);
+        socket.join(msg.informationid);
     });
     socket.on('c2s-chat', function(msg){
-        values = [
-            msg.informationid,
-            msg.userid,
-            msg.comment
-        ];
+        const Comment = require('./model/Comment');
+        
+        values = {
+            information: msg.informationid,
+            user: msg.userid,
+            comment: msg.comment
+        };
         console.log(values);
+
+        try {
+            Comment.create(values);
+        } catch (err) {
+            console.log(err);
+            res.render('error/500.hbs');
+        }
+
+        io_socket.to(msg.informationid).emit('s2c-chat', msg);
     });
 });

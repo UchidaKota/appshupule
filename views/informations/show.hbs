@@ -25,14 +25,20 @@
         <h4>コメント</h4>
         <div class="card information">
             <div class="card-content">
-                <p>コメントはまだありません</p>
+                <ul id="comments">
+                {{#each comment}}
+                    <li>{{user}} {{comment}}</li>
+                {{else}}
+                    <p>コメントはまだありません</p>
+                {{/each}}
+                </ul>
                 <form id="chatForm">
                     <div class="row">
                         <div class="input-field">
                             <input type="text" id="comment" name="comment">
                             <label for="comment">コメント入力</label>
-                            <input type="submit" value="投稿" class="btn">
                         </div>
+                        <input type="submit" value="投稿" class="btn">
                     </div>
                 </form>
             </div>
@@ -44,7 +50,9 @@
 
 <script> 
     const informationid =  "{{information._id}}";
-    const userid =  "{{information.user._id}}";
+    const userid =  "{{userid}}";
+    const username =  "{{username}}";
+    console.log(informationid + '   ' + userid + '  ' + username);
 </script>
 
 <script src="/js/socket.js"></script>

@@ -3,6 +3,7 @@ const {ensureAuth} = require('../middleware/auth');
 const {stripTags} = require('../helpers/hbs');
 
 const Information = require('../model/Information');
+const Comment = require('../model/Comment');
 
 //Show add page
 router.get('/add', ensureAuth, (req, res) => {
@@ -25,27 +26,24 @@ router.post('/', ensureAuth, async (req, res) => {
 //Show single information
 router.get('/:id', ensureAuth, async (req, res) => {
     try {
-      let information = await Information.findById(req.params.id).populate('user').lean();
-  
-      if (!information) {
-        return res.render('error/404.hbs');
-      }
+        let information = await Information.findById(req.params.id).populate('user').lean();
+    
+        if (!information) {
+            return res.render('error/404.hbs');
+        }
 
-      console.log(information);
+        let comment = await Comment.find({information: req.params.id}).lean();
 
-      res.render('informations/show.hbs', {
-        information,
-      });
-  
-    //   if (information.user._id != req.user.id && information.status == 'private') {
-    //     res.render('error/404')
-    //   } else {
-    //     res.render('informations/show', {
-    //       information,
-    //     })
-    //   }
+        console.log(information);
+        console.log(comment);
+
+        console.log(req.user);
+        res.render('informations/show.hbs', {
+            information, comment, userid: req.user.id, username: req.user.firstName
+        });
+
     } catch (err) {
-      console.error(err)
+      console.error(err);
       res.render('error/404.hbs');
     }
 });
