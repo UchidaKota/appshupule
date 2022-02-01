@@ -3,6 +3,22 @@ const {ensureAuth} = require('../middleware/auth');
 
 const User = require('../model/User');
 
+//follow画面
+router.get("/", ensureAuth, async (req, res) => {
+    try {
+        const followUsers = await User.find({$and:[{_id: {$ne:req.user.id}}, {followers: req.user.id}]}).lean();
+
+        const unFollowUsers = await User.find({$and:[{_id: {$ne:req.user.id}}, {followers: {$ne:req.user.id}}]}).lean();
+        
+        res.render('follow/follow.hbs', {
+            followUsers, unFollowUsers
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).render('error/500.hbs');
+    }
+});
+
 //follow a user, 記事画面からのフォロー
 router.post("/:toUserId/:fromUserId", ensureAuth, async (req, res) => {
     if (req.body.toUserId !== req.body.fromUserId) {
@@ -22,7 +38,6 @@ router.post("/:toUserId/:fromUserId", ensureAuth, async (req, res) => {
         }
     } else {
         res.send({values:"フォローする", msg:"自分自身はフォローできません"});
-
     }
 });
   

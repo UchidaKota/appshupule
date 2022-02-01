@@ -19,7 +19,7 @@ router.post('/', ensureAuth, async (req, res) => {
         res.redirect('/dashboard');
     } catch(err){
         console.log(err);
-        res.render('error/500.hbs');
+        return res.render('error/500.hbs');
     }
 });
 
@@ -50,7 +50,7 @@ router.get('/:id', ensureAuth, async (req, res) => {
 
     } catch (err) {
       console.error(err);
-      res.render('error/404.hbs');
+      return res.render('error/404.hbs');
     }
 });
 
@@ -67,7 +67,7 @@ router.get('/', ensureAuth, async (req, res) => {
         });
     } catch(err){
         console.log(err);
-        res.render('error/500.hbs');
+        return res.render('error/500.hbs');
     }
 });
 
@@ -156,7 +156,7 @@ router.get('/user/:userId', ensureAuth, async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.render('error/500.hbs');
+        return res.render('error/500.hbs');
     }
 });
 
