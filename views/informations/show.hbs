@@ -19,6 +19,11 @@
             <div class="card-action">
                 <a href="/informations/user/{{information.user._id}}">More From {{information.user.firstName}}</a>
             </div>
+            <div class="card-action">
+                <form action="" method="POST">
+                    <input id="followButton" type="button" value="{{followMsg}}" class="btn">
+                </form>
+            </div>
         </div>
     </div>
     <div class="col s12 m10">
@@ -27,19 +32,17 @@
             <div class="card-content">
                 <ul id="comments">
                 {{#each comment}}
-                    <li>{{user}} {{comment}}</li>
+                    <li>{{user._id}} {{comment}}</li>
                 {{else}}
                     <p>コメントはまだありません</p>
                 {{/each}}
                 </ul>
                 <form id="chatForm">
-                    <div class="row">
-                        <div class="input-field">
-                            <input type="text" id="comment" name="comment">
-                            <label for="comment">コメント入力</label>
-                        </div>
-                        <input type="submit" value="投稿" class="btn">
+                    <div class="input-field">
+                        <input type="text" id="comment" name="comment">
+                        <label for="comment">コメント入力</label>
                     </div>
+                    <input type="submit" value="投稿" class="btn">
                 </form>
             </div>
         </div>
@@ -49,10 +52,28 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script> 
-    const informationid =  "{{information._id}}";
-    const userid =  "{{userid}}";
-    const username =  "{{username}}";
-    console.log(informationid + '   ' + userid + '  ' + username);
+    const informationId =  "{{information._id}}";
+    const informationUserId = "{{information.user._id}}";
+    const userId =  "{{userId}}";
+
+    $('#followButton').click(function(e){
+        var values = {
+            toUserId: informationUserId,
+            fromUserId: userId
+        };
+        console.log(values);
+        $.ajax({
+            url:"/follow/:toUserId/:fromUserId",
+            type:"POST",
+            data:values,
+        }).done(function (results){
+            document.getElementById("followButton").value=results.values;
+            alert(results.msg);
+        }).fail(function (xhr, textStatus, errorThrown){
+            console.log("ajax通信に失敗しました");
+        }).always(function (xhr){
+        });
+    });
 </script>
 
 <script src="/js/socket.js"></script>

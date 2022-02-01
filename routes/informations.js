@@ -32,14 +32,20 @@ router.get('/:id', ensureAuth, async (req, res) => {
             return res.render('error/404.hbs');
         }
 
-        let comment = await Comment.find({information: req.params.id}).lean();
+        let comment = await Comment.find({information: req.params.id}).populate('user').lean();
 
         console.log(information);
         console.log(comment);
 
         console.log(req.user);
+        if(req.user.followings.includes(information.user._id)){
+            msg = "フォロー中";
+        }else {
+            msg = "フォローする";
+        }
+
         res.render('informations/show.hbs', {
-            information, comment, userid: req.user.id, username: req.user.firstName
+            information, comment, userId: req.user.id, followMsg: msg
         });
 
     } catch (err) {

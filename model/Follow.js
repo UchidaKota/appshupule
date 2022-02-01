@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const LikeSchema = new mongoose.Schema({
-    user: {
+    touser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    information: {
+    fromuser: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Information',
+      ref: 'User',
     },
     createdAt: {
       type: Date,

@@ -34,6 +34,7 @@ app.use(methodOverride(function (req, res) {
 
 //Handlebars Helpers
 const {formatDate, truncate, stripTags, editIcon, select} = require('./helpers/hbs');
+const res = require('express/lib/response');
 
 //Handlebars
 app.engine('.hbs', engine({
@@ -73,20 +74,21 @@ app.use(express.static(__dirname + '/views', {index: false}));
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/informations', require('./routes/informations'));
+app.use('/follow', require('./routes/follow'));
 
 http_socket.listen(3000, () => console.log("server run and up"));
 
 io_socket.on('connection', function(socket){
     console.log('connected');
     socket.on('c2s-join', function(msg){
-        socket.join(msg.informationid);
+        socket.join(msg.informationId);
     });
     socket.on('c2s-chat', function(msg){
         const Comment = require('./model/Comment');
         
         values = {
-            information: msg.informationid,
-            user: msg.userid,
+            information: msg.informationId,
+            user: msg.userId,
             comment: msg.comment
         };
         console.log(values);
@@ -98,6 +100,6 @@ io_socket.on('connection', function(socket){
             res.render('error/500.hbs');
         }
 
-        io_socket.to(msg.informationid).emit('s2c-chat', msg);
+        io_socket.to(msg.informationId).emit('s2c-chat', msg);
     });
 });
