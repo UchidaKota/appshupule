@@ -11,7 +11,7 @@ router.get("/", ensureAuth, async (req, res) => {
         const unFollowUsers = await User.find({$and:[{_id: {$ne:req.user.id}}, {followers: {$ne:req.user.id}}]}).lean();
         
         res.render('follow/follow.hbs', {
-            followUsers, unFollowUsers
+            followUsers, unFollowUsers, userId: req.user.id
         });
     } catch (err) {
         console.log(err);
@@ -19,7 +19,7 @@ router.get("/", ensureAuth, async (req, res) => {
     }
 });
 
-//follow a user, 記事画面からのフォロー
+//follow a user
 router.post("/:toUserId/:fromUserId", ensureAuth, async (req, res) => {
     if (req.body.toUserId !== req.body.fromUserId) {
         try {

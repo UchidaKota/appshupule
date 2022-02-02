@@ -15,7 +15,7 @@
             <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
             <td>
                 <form action="" method="POST">
-                    <input id="followButton" type="button" value="フォロー中" class="btn">
+                    <input id="{{_id}}" type="button" value="フォロー中" class="btn" onclick="follow(this.id)">
                 </form>
             </td>
         </tr>
@@ -42,7 +42,7 @@
             <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
             <td>
                 <form action="" method="POST">
-                    <input id="followButton" type="button" value="フォローする" class="btn">
+                    <input id="{{_id}}" type="button" value="フォローする" class="btn" onclick="follow(this.id)">
                 </form>
             </td>
         </tr>
@@ -54,15 +54,12 @@
 {{/if}}
 
 <script> 
-    const informationId =  "{{information._id}}";
-    const informationUserId = "{{information.user._id}}";
-    const userId =  "{{userId}}";
-    console.log()
+    const fromUserId =  "{{userId}}";
 
-    $('#followButton').click(function(e){
+    function follow(toUserId){
         var values = {
-            toUserId: informationUserId,
-            fromUserId: userId
+            toUserId: toUserId,
+            fromUserId: fromUserId,
         };
         console.log(values);
         $.ajax({
@@ -70,11 +67,11 @@
             type:"POST",
             data:values,
         }).done(function (results){
-            document.getElementById("followButton").value=results.values;
+            document.getElementById(toUserId).value=results.values;
             alert(results.msg);
         }).fail(function (xhr, textStatus, errorThrown){
             console.log("ajax通信に失敗しました");
         }).always(function (xhr){
         });
-    });
+    }
 </script>
