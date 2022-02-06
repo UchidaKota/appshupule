@@ -4,6 +4,7 @@ const {stripTags} = require('../helpers/hbs');
 
 const Information = require('../model/Information');
 const Comment = require('../model/Comment');
+const User = require('../model/User');
 
 //Show add page
 router.get('/add', ensureAuth, (req, res) => {
@@ -26,16 +27,40 @@ router.post('/', ensureAuth, async (req, res) => {
 //Show single information
 router.get('/:id', ensureAuth, async (req, res) => {
     try {
-        let information = await Information.findById(req.params.id).populate('user').lean();
-    
+        let informationViewSet = await Information.findOne({_id: req.params.id});
+        console.log(informationViewSet);
+        
+        //記事の主はノーカン
+        if(informationViewSet.user._id != req.user.id){
+            await informationViewSet.updateOne({$addToSet: {viewUsers : req.user.id}});
+        }
+
+        let informationViewPop = await Information.findOne({_id: req.params.id});
+        console.log(informationViewPop);
+        
+        console.log(informationViewPop.viewUsers.length);
+         //最大3人まで
+        if(informationViewPop.viewUsers.length > 3){
+            await informationViewPop.updateOne({$pop: {viewUsers: -1}});
+        }
+
+        const information = await Information.findById(req.params.id).populate('user').lean();
+        console.log(information);
         if (!information) {
             return res.render('error/404.hbs');
         }
 
-        let comment = await Comment.find({information: req.params.id}).populate('user').lean();
+        const viewUsers = await User.find({_id: {$in: information.viewUsers}}).lean();
+        console.log(viewUsers);
+        if (!viewUsers) {
+            return res.render('error/404.hbs');
+        }
 
-        console.log(information);
+        const comment = await Comment.find({information: req.params.id}).populate('user').lean();
         console.log(comment);
+        if (!comment) {
+            return res.render('error/404.hbs');
+        }
 
         console.log(req.user);
         if(req.user.followings.includes(information.user._id)){
@@ -45,7 +70,7 @@ router.get('/:id', ensureAuth, async (req, res) => {
         }
 
         res.render('informations/show.hbs', {
-            information, comment, userId: req.user.id, followMsg: msg
+            information, comment, viewUsers, userId: req.user.id, followMsg: msg
         });
 
     } catch (err) {

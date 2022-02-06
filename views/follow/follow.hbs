@@ -1,13 +1,6 @@
 <h3>フォロー中</h3>
 {{#if followUsers}}
 <table class="striped">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
         {{#each followUsers}}
         <tr>
@@ -25,16 +18,10 @@
 {{else}}
 <p>まだ誰もフォローしていません</p>
 {{/if}}
+<br>
 <h3>あなたへのおすすめ</h3>
 {{#if unFollowUsers}}
 <table class="striped">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
         {{#each unFollowUsers}}
         <tr>

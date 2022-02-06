@@ -5,7 +5,7 @@
         </h3>
         <div class="card information">
             <div class="card-content">
-                <span class="card-title">{{formatDate date 'MMMM Do YYYY, h:mm:ss a'}}</span>
+                <span class="card-title">{{formatDate information.createdAt 'MMMM Do YYYY, h:mm:ss a'}}</span>
                 {{{information.body}}}
             </div>
         </div>
@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="col s12 m10">
+    <div class="col s12 m8">
         <h4>コメント</h4>
         <div class="card information">
             <div class="card-content">
@@ -44,6 +44,18 @@
                     </div>
                     <input type="submit" value="投稿" class="btn">
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m4">
+        <h4>最近訪れたユーザ</h4>
+        <div class="card information">
+            <div class="card-content">
+                {{#each viewUsers}}
+                    <li><a href="/informations/user/{{_id}}">{{displayName}}</a></li>
+                {{else}}
+                    <p>まだいません</p>
+                {{/each}}
             </div>
         </div>
     </div>
