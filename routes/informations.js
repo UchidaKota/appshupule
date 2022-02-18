@@ -8,6 +8,7 @@ const User = require('../model/User');
 
 //Show add page
 router.get('/add', ensureAuth, (req, res) => {
+    
     res.render('informations/add.hbs');
 });
 
