@@ -6,6 +6,10 @@ const InformationSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    keyword: {
+      type: String,
+      required: true,
+    },
     body: {
       type: String,
       required: true,
