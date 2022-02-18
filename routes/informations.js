@@ -12,12 +12,49 @@ router.get('/add', ensureAuth, (req, res) => {
 });
 
 //Process add form
-router.post('/', ensureAuth, async (req, res) => {
+router.post('/add/result', ensureAuth, async (req, res) => {
     try{
         req.body.user = req.user.id;
         req.body.body = stripTags(req.body.body);
         await Information.create(req.body);
         res.redirect('/dashboard');
+    } catch(err){
+        console.log(err);
+        return res.render('error/500.hbs');
+    }
+});
+
+//Show all informations
+router.get('/', ensureAuth, async (req, res) => {
+    try{
+        const informations = await Information.find({status: 'public'})
+            .populate('user')
+            .sort({createdAt: 'desc'})
+            .lean();
+        
+        res.render('informations/index.hbs', {
+            informations,
+        });
+    } catch(err){
+        console.log(err);
+        return res.render('error/500.hbs');
+    }
+});
+
+//search informations
+router.post('/', ensureAuth, async (req, res) => {
+    console.log('検索');
+    try{
+        const informations = await Information.find({title: {$regex: req.body.search, $options: "i"}})
+            .populate('user')
+            .sort({createdAt: 'desc'})
+            .lean();
+        
+        console.log(informations);
+        
+        res.render('informations/index.hbs', {
+            informations,
+        });
     } catch(err){
         console.log(err);
         return res.render('error/500.hbs');
@@ -79,23 +116,6 @@ router.get('/:id', ensureAuth, async (req, res) => {
     }
 });
 
-//Show all informations
-router.get('/', ensureAuth, async (req, res) => {
-    try{
-        const informations = await Information.find({status: 'public'})
-            .populate('user')
-            .sort({createdAt: 'desc'})
-            .lean();
-        
-        res.render('informations/index.hbs', {
-            informations,
-        });
-    } catch(err){
-        console.log(err);
-        return res.render('error/500.hbs');
-    }
-});
-
 //Show edit page
 router.get('/edit/:id', ensureAuth, async (req, res) => {
     try{
@@ -110,7 +130,7 @@ router.get('/edit/:id', ensureAuth, async (req, res) => {
         if(information.user != req.user.id){
             res.redirect('/informations');
         }else{
-            res.render('informations/edit', {
+            res.render('informations/edit.hbs', {
                 information
             });
         }
