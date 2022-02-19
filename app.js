@@ -34,9 +34,8 @@ app.use(methodOverride(function (req, res) {
 
 //Handlebars Helpers
 const {formatDate, truncate, stripTags, editIcon, select} = require('./helpers/hbs');
-const res = require('express/lib/response');
 
-//Handlebars
+//Handlebarsaa
 app.engine('.hbs', engine({
     helpers: {
         formatDate,
@@ -75,6 +74,7 @@ app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/informations', require('./routes/informations'));
 app.use('/follow', require('./routes/follow'));
+app.use('/channel', require('./routes/channel'));
 
 http_socket.listen(3000, () => console.log("server run and up"));
 

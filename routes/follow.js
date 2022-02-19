@@ -10,9 +10,16 @@ router.get("/", ensureAuth, async (req, res) => {
 
         const unFollowUsers = await User.find({$and:[{_id: {$ne:req.user.id}}, {followers: {$ne:req.user.id}}]}).lean();
         
-        res.render('follow/follow.hbs', {
-            followUsers, unFollowUsers, userId: req.user.id
-        });
+        if(req.session.channel === 'all'){
+            res.render('follow/follow.hbs', {
+                followUsers, unFollowUsers, userId: req.user.id
+            });
+        }else {
+            res.render('follow/follow.hbs', {
+                followUsers, unFollowUsers, userId: req.user.id,
+                layout: 'main-ch'
+            });
+        }
     } catch (err) {
         console.log(err);
         return res.status(500).render('error/500.hbs');

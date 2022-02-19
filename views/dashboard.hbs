@@ -1,5 +1,9 @@
 <h3>Dashboard</h3>
+{{#if channel}}
+<h3>{{channel.name}}チャンネルに参加中</h3>
+{{else}}
 <h3>ようこそ {{name}}さん</h3>
+{{/if}}
 {{#if informations}}
 <p>あなたの投稿</p>
 <table class="striped">

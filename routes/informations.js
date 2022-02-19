@@ -5,10 +5,17 @@ const {stripTags} = require('../helpers/hbs');
 const Information = require('../model/Information');
 const Comment = require('../model/Comment');
 const User = require('../model/User');
+const Channel = require('../model/Channel');
 
 //Show add page
 router.get('/add', ensureAuth, (req, res) => {
-    res.render('informations/add.hbs');
+    if(req.session.channel === 'all'){
+        res.render('informations/add.hbs');
+    }else {
+        res.render('informations/add.hbs', {
+            layout: 'main-ch'
+        });
+    }
 });
 
 //Process add form
@@ -27,14 +34,27 @@ router.post('/add/result', ensureAuth, async (req, res) => {
 //Show all informations
 router.get('/', ensureAuth, async (req, res) => {
     try{
-        const informations = await Information.find({status: 'public'})
-            .populate('user')
-            .sort({createdAt: 'desc'})
-            .lean();
-        
-        res.render('informations/index.hbs', {
-            informations,
-        });
+        if(req.session.channel === 'all'){
+            const informations = await Information.find({status: 'public'})
+                .populate('user')
+                .sort({createdAt: 'desc'})
+                .lean();
+            
+            res.render('informations/index.hbs', {
+                informations,
+            });
+        }else {
+            const channel = await Channel.findById({_id: req.session.channel}).lean();
+            const informations = await Information.find({user: {$in: channel.joinUsers}})
+                .populate('user')
+                .sort({createdAt: 'desc'})
+                .lean();
+            
+            res.render('informations/index.hbs', {
+                informations,
+                layout: 'main-ch'
+            });
+        }
     } catch(err){
         console.log(err);
         return res.render('error/500.hbs');
@@ -43,7 +63,6 @@ router.get('/', ensureAuth, async (req, res) => {
 
 //search informations
 router.post('/', ensureAuth, async (req, res) => {
-    console.log('検索');
     try{
         const informations = await Information.find({title: {$regex: req.body.search, $options: "i"}})
             .populate('user')
@@ -51,10 +70,17 @@ router.post('/', ensureAuth, async (req, res) => {
             .lean();
         
         console.log(informations);
-        
-        res.render('informations/index.hbs', {
-            informations,
-        });
+
+        if(req.session.channel === 'all'){
+            res.render('informations/index.hbs', {
+                informations,
+            });
+        }else {
+            res.render('informations/index.hbs', {
+                informations,
+                layout: 'main-ch'
+            });
+        }
     } catch(err){
         console.log(err);
         return res.render('error/500.hbs');
@@ -106,10 +132,16 @@ router.get('/:id', ensureAuth, async (req, res) => {
             msg = "フォローする";
         }
 
-        res.render('informations/show.hbs', {
-            information, comment, viewUsers, userId: req.user.id, followMsg: msg
-        });
-
+        if(req.session.channel === 'all'){
+            res.render('informations/show.hbs', {
+                information, comment, viewUsers, userId: req.user.id, followMsg: msg
+            });
+        }else {
+            res.render('informations/show.hbs', {
+                information, comment, viewUsers, userId: req.user.id, followMsg: msg,
+                layout: 'main-ch'
+            });
+        }
     } catch (err) {
       console.error(err);
       return res.render('error/404.hbs');
@@ -130,9 +162,16 @@ router.get('/edit/:id', ensureAuth, async (req, res) => {
         if(information.user != req.user.id){
             res.redirect('/informations');
         }else{
-            res.render('informations/edit.hbs', {
-                information
-            });
+            if(req.session.channel === 'all'){
+                res.render('informations/edit.hbs', {
+                    information
+                });
+            }else {
+                res.render('informations/edit.hbs', {
+                    information,
+                    layout: 'main-ch'
+                });
+            }
         }
     } catch(err){
         console.error(err);
@@ -196,9 +235,16 @@ router.get('/user/:userId', ensureAuth, async (req, res) => {
         .populate('user')
         .lean();
   
-        res.render('informations/index.hbs', {
-            informations,
-        });
+        if(req.session.channel === 'all'){
+            res.render('informations/index.hbs', {
+                informations,
+            });
+        }else {
+            res.render('informations/index.hbs', {
+                informations,
+                layout: 'main-ch'
+            });
+        }
     } catch (err) {
         console.error(err);
         return res.render('error/500.hbs');
