@@ -64,18 +64,31 @@ router.get('/', ensureAuth, async (req, res) => {
 //search informations
 router.post('/', ensureAuth, async (req, res) => {
     try{
-        const informations = await Information.find({title: {$regex: req.body.search, $options: "i"}})
-            .populate('user')
-            .sort({createdAt: 'desc'})
-            .lean();
-        
-        console.log(informations);
-
         if(req.session.channel === 'all'){
+            const informations = await Information.find({$or: [
+                {title: {$regex: req.body.search, $options: "i"}},
+                {keyword: {$regex: req.body.search, $options: "i"}}
+            ], status: 'public'})
+                .populate('user')
+                .sort({createdAt: 'desc'})
+                .lean();
+
             res.render('informations/index.hbs', {
                 informations,
             });
         }else {
+            const channel = await Channel.findById({_id: req.session.channel}).lean();
+            const informations = await Information.find({$and: [
+                {$or: [
+                    {title: {$regex: req.body.search, $options: "i"}},
+                    {keyword: {$regex: req.body.search, $options: "i"}}
+                ]},
+                {user: {$in: channel.joinUsers}}
+            ]})
+                .populate('user')
+                .sort({createdAt: 'desc'})
+                .lean();
+
             res.render('informations/index.hbs', {
                 informations,
                 layout: 'main-ch'
@@ -228,18 +241,20 @@ router.delete('/:id', ensureAuth, async (req, res) => {
 //User informations
 router.get('/user/:userId', ensureAuth, async (req, res) => {
     try {
-        const informations = await Information.find({
-            user: req.params.userId,
-            status: 'public',
-        })
-        .populate('user')
-        .lean();
-  
         if(req.session.channel === 'all'){
+            const informations = await Information.find({
+                user: req.params.userId,
+                status: 'public',
+            }).populate('user').lean();
+
             res.render('informations/index.hbs', {
                 informations,
             });
         }else {
+            const informations = await Information.find({
+                user: req.params.userId,
+            }).populate('user').lean();
+
             res.render('informations/index.hbs', {
                 informations,
                 layout: 'main-ch'

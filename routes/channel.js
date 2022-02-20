@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const {ensureAuth} = require('../middleware/auth');
 
+const User = require('../model/User');
 const Channel = require('../model/Channel');
 
 //チャンネル画面表示
@@ -79,6 +80,39 @@ router.post('/search/result', ensureAuth, async (req, res) => {
         await channel.updateOne({$addToSet: {joinUsers: req.user.id }});
 
         res.redirect('/channel');
+    } catch(err){
+        console.log(err);
+        res.render('error/500.hbs');
+    }
+});
+
+//チャンネルメンバー画面
+router.get('/member', ensureAuth, async (req, res) => {
+    try{
+        const channel = await Channel.findById({_id: req.session.channel}).lean();
+        const channelUsers = await User.find({_id: {$in: channel.joinUsers}}).lean();
+
+        res.render('channel/member.hbs', {
+            channelUsers,
+            layout: 'main-ch'
+        });
+    } catch(err){
+        console.log(err);
+        res.render('error/500.hbs');
+    }
+});
+
+//チャンネルチャット画面
+router.get('/chat', ensureAuth, async (req, res) => {
+    try{
+        const channel = await Channel.findById({_id: req.session.channel}).lean();
+        const channelUsers = await User.find({_id: {$in: channel.joinUsers}}).lean();
+
+        res.render('channel/chat.hbs', {
+            channelUsers,
+            channel,
+            layout: 'main-ch'
+        });
     } catch(err){
         console.log(err);
         res.render('error/500.hbs');

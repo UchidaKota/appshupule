@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col s12 m8">
+        <h3>{{channel.name}}チャンネル({{channel.joinUsers.length}})</h3>
+        <div class="card information">
+            <div class="card-content">
+                <ul id="comments">
+                {{#each comment}}
+                    <li>{{user._id}} {{comment}}</li>
+                {{else}}
+                    <p>さっそく会話をしましょう</p>
+                {{/each}}
+                </ul>
+                <form id="chatForm">
+                    <div class="row">
+                        <div class="input-field col s10">
+                            <input type="text" id="message" name="message">
+                            <label for="message">メッセージを入力</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <input type="submit" value="送信" class="btn">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m4">
+        <h3>メンバー</h3>
+        <table class="striped">
+            <tbody>
+                {{#each channelUsers}}
+                <tr>
+                    <td><img src="{{image}}" class="circle"></td>
+                    <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+<p>{{user}}</p>
+<script src="/socket.io/socket.io.js"></script>
+
+<script> 
+    const channelId =  "{{channel._id}}";
+    console.log(channelId);
+</script>
+
+<script src="/js/socket-chat.js"></script>

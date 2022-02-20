@@ -1,25 +1,29 @@
-<div class="container login-container">
-    <div class="card">
-        <div class="card-content">
-            <h3><i class="fas fa-book-reader"></i>ITBooks</h3>
-            <div class="section">
-                <form action="/channel/add" method="POST">
-                    <div class="input-field">
-                        <input type="text" id="name" name="name">
-                        <label for="name">channel</label>
-                    </div>
-                    <input type="submit" value="チャンネル作成" class="btn">
-                </form>
+<div class="row">
+    <div class="login-container col s12 m6">
+        <div class="card">
+            <div class="card-content">
+                <h3><i class="fas fa-book-reader"></i>ITBooks</h3>
+                <div class="section">
+                    <form action="/channel/add" method="POST">
+                        <div class="input-field">
+                            <input type="text" id="name" name="name">
+                            <label for="name">channel</label>
+                        </div>
+                        <input type="submit" value="チャンネル作成" class="btn">
+                    </form>
+                </div>
+                <a href="/channel/search">チャンネルを見つける</a>
             </div>
-            <a href="/channel/search">チャンネルを見つける</a>
         </div>
     </div>
+    <div class="login-container col s12 m6">
+        {{#if channels}}
+            <h4>所属チャンネル</h4>
+            {{#each channels}}
+                <p>チャンネル名：<a href="/channel/join/{{_id}}">{{name}}</a>　{{joinUsers.length}}人のメンバー</p>
+            {{/each}}
+        {{else}}
+        <h4>参加しているチャンネルはありません</h4>
+        {{/if}}
+    </div>
 </div>
-{{#if channels}}
-    <h4 class="center-align">所属チャンネル</h4>
-    {{#each channels}}
-        <p class="center-align">チャンネル名：<a href="/channel/join/{{_id}}">{{name}}</a>　メンバー：{{joinUsers.length}}人</p>
-    {{/each}}
-{{else}}
-<h4 class="center-align">参加しているチャンネルはありません</h4>
-{{/if}}

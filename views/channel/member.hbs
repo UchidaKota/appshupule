@@ -1,0 +1,11 @@
+<h3>メンバー</h3>
+<table class="striped">
+    <tbody>
+        {{#each channelUsers}}
+        <tr>
+            <td><img src="{{image}}" class="circle"></td>
+            <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
