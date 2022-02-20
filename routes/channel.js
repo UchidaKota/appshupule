@@ -3,6 +3,7 @@ const {ensureAuth} = require('../middleware/auth');
 
 const User = require('../model/User');
 const Channel = require('../model/Channel');
+const Chat = require('../model/Chat');
 
 //チャンネル画面表示
 router.get('/', ensureAuth, async (req, res) => {
@@ -107,10 +108,19 @@ router.get('/chat', ensureAuth, async (req, res) => {
     try{
         const channel = await Channel.findById({_id: req.session.channel}).lean();
         const channelUsers = await User.find({_id: {$in: channel.joinUsers}}).lean();
+        const loggedUser = await User.findById({_id: req.user.id}).lean();
+        const chats = await Chat.find({channel: req.session.channel}).populate('user').lean();
 
+        console.log(chats);
+
+        console.log(loggedUser);
         res.render('channel/chat.hbs', {
             channelUsers,
             channel,
+            chats,
+            userId: loggedUser._id,
+            userName: loggedUser.displayName,
+            userImage: loggedUser.image,
             layout: 'main-ch'
         });
     } catch(err){

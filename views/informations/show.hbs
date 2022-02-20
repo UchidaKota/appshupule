@@ -32,7 +32,7 @@
             <div class="card-content">
                 <ul id="comments">
                 {{#each comment}}
-                    <li>{{user._id}} {{comment}}</li>
+                    <li><img src="{{user.image}}" class="circle chatimg">　{{user.displayName}}　{{comment}}</li>
                 {{else}}
                     <p>コメントはまだありません</p>
                 {{/each}}
@@ -66,7 +66,8 @@
 <script> 
     const informationId =  "{{information._id}}";
     const informationUserId = "{{information.user._id}}";
-    const userId =  "{{userId}}";
+    const userInfo = {userId: "{{userId}}", userName: "{{userName}}", userImage: "{{userImage}}"};
+    console.log(userInfo);
     
     $('#followButton').click(function(e){
         var values = {

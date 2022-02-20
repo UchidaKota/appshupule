@@ -85,21 +85,34 @@ io_socket.on('connection', function(socket){
     });
     socket.on('c2s-chat', function(msg){
         const Comment = require('./model/Comment');
-        
+        console.log(msg.userInfo);
         values = {
             information: msg.informationId,
-            user: msg.userId,
+            user: msg.userInfo.userId,
             comment: msg.comment
         };
         console.log(values);
 
-        try {
-            Comment.create(values);
-        } catch (err) {
-            console.log(err);
-            res.render('error/500.hbs');
-        }
+        Comment.create(values);
 
         io_socket.to(msg.informationId).emit('s2c-chat', msg);
+    });
+
+    socket.on('channel-join', function(msg){
+        socket.join(msg.channelId);
+    });
+    socket.on('channel-chat', function(msg){
+        const Chat = require('./model/Chat');
+        console.log(msg.userInfo);
+        values = {
+            channel: msg.channelId,
+            user: msg.userInfo.userId,
+            message: msg.message
+        };
+        console.log(values);
+
+        Chat.create(values);
+
+        io_socket.to(msg.channelId).emit('channel-chat', msg);
     });
 });

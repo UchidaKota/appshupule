@@ -11,7 +11,7 @@ form.addEventListener("submit", function(event){
     event.preventDefault();
     sendData = {
         informationId: informationId,
-        userId: userId,
+        userInfo: userInfo,
         comment: document.getElementById("comment").value
     }
     console.log(sendData);
@@ -22,6 +22,6 @@ socketio.on('s2c-chat', function(msg){
     var ul = document.getElementById("comments");
     var li = document.createElement('li');
     console.log('ソケットs2c-chat1:' + msg.userId + ' ' + msg.comment);
-    li.innerHTML = msg.userId + ' ' + msg.comment;
+    li.innerHTML = '<img src="'+ msg.userInfo.userImage+'" class="circle chatimg"> ' + msg.userInfo.userName + msg.comment;
     ul.appendChild(li);
 });

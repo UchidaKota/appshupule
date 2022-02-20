@@ -145,13 +145,28 @@ router.get('/:id', ensureAuth, async (req, res) => {
             msg = "フォローする";
         }
 
+        const loggedUser = await User.findById({_id: req.user.id}).lean();
+        console.log(loggedUser);
+
         if(req.session.channel === 'all'){
             res.render('informations/show.hbs', {
-                information, comment, viewUsers, userId: req.user.id, followMsg: msg
+                information, 
+                comment, 
+                viewUsers, 
+                followMsg: msg,
+                userId: loggedUser._id,
+                userName: loggedUser.displayName,
+                userImage: loggedUser.image,
             });
         }else {
             res.render('informations/show.hbs', {
-                information, comment, viewUsers, userId: req.user.id, followMsg: msg,
+                information,
+                comment, 
+                viewUsers, 
+                followMsg: msg,
+                userId: loggedUser._id,
+                userName: loggedUser.displayName,
+                userImage: loggedUser.image,
                 layout: 'main-ch'
             });
         }
