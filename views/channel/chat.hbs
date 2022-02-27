@@ -5,7 +5,10 @@
             <div class="card-content">
                 <ul id="messages">
                 {{#each chats}}
-                    <li><img src="{{user.image}}" class="circle chatimg">　{{user.displayName}}　{{message}}</li>
+                    <li class="row">
+                        <div class="col s2"><img src="{{user.image}}" class="circle chatimg"></div>
+                        <div class="col s10"><span class="font-small">{{user.displayName}}</span><br>{{message}}</div>
+                    </li>
                 {{else}}
                     <p>さっそく会話をしましょう</p>
                 {{/each}}

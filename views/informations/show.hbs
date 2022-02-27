@@ -32,17 +32,24 @@
             <div class="card-content">
                 <ul id="comments">
                 {{#each comment}}
-                    <li><img src="{{user.image}}" class="circle chatimg">　{{user.displayName}}　{{comment}}</li>
+                    <li class="row">
+                        <div class="col s2"><img src="{{user.image}}" class="circle chatimg"></div>
+                        <div class="col s10"><span class="font-small">{{user.displayName}}</span><br>{{comment}}</div>
+                    </li>
                 {{else}}
                     <p>コメントはまだありません</p>
                 {{/each}}
                 </ul>
                 <form id="chatForm">
-                    <div class="input-field">
-                        <input type="text" id="comment" name="comment">
-                        <label for="comment">コメント入力</label>
+                    <div class="row">
+                        <div class="input-field col s10">
+                            <input type="text" id="comment" name="comment">
+                            <label for="comment">コメント入力</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <input type="submit" value="送信" class="btn">
+                        </div>
                     </div>
-                    <input type="submit" value="投稿" class="btn">
                 </form>
             </div>
         </div>
@@ -72,7 +79,7 @@
     $('#followButton').click(function(e){
         var values = {
             toUserId: informationUserId,
-            fromUserId: userId
+            fromUserId: userInfo.userId
         };
         console.log(values);
         $.ajax({

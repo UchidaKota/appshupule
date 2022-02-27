@@ -21,7 +21,8 @@ form.addEventListener("submit", function(event){
 socketio.on('channel-chat', function(msg){
     var ul = document.getElementById("messages");
     var li = document.createElement('li');
+    li.className = 'row';
     console.log('ソケットs2c-chat1:' + msg.userInfo.userId + ' ' + msg.comment);
-    li.innerHTML = '<img src="'+ msg.userInfo.userImage+'" class="circle chatimg"> ' + msg.userInfo.userName + msg.message;
+    li.innerHTML = '<div class="col s2"><img src="'+msg.userInfo.userImage+'" class="circle chatimg"></div><div class="col s10"><span class="font-small">'+msg.userInfo.userName+'</span><br>'+msg.message+'</div>';
     ul.appendChild(li);
 });

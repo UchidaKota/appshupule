@@ -129,4 +129,11 @@ router.get('/chat', ensureAuth, async (req, res) => {
     }
 });
 
+//全体チャンネルに戻る
+router.get('/all', ensureAuth, (req, res) => {
+    req.session.channel = 'all';
+    console.log(req.session.channel);
+    res.redirect('/dashboard');
+});
+
 module.exports = router;
