@@ -41,18 +41,6 @@ router.post('/add/result', ensureAuth, async (req, res) => {
     }
 });
 
-function saveCover(information, coverEncoded) {
-    if (coverEncoded == null) return;
-
-    const cover = JSON.parse(coverEncoded);
-    console.log(cover.data);
-    if (cover != null && imageMimeTypes.includes(cover.type)) {
-        information.coverImage = new Buffer.from(cover.data, 'base64');
-        information.coverImageType = cover.type;
-    }
-  }
-  
-
 //Show all informations
 router.get('/', ensureAuth, async (req, res) => {
     try{
@@ -139,7 +127,7 @@ router.get('/:id', ensureAuth, async (req, res) => {
             await informationViewPop.updateOne({$pop: {viewUsers: -1}});
         }
 
-        const information = await Information.findById(req.params.id).populate('user').lean();
+        const information = await Information.findById(req.params.id).populate('user').lean({virtuals: true});
         if (!information) {
             return res.render('error/404.hbs');
         }
@@ -195,7 +183,7 @@ router.get('/edit/:id', ensureAuth, async (req, res) => {
     try{
         const information = await Information.findOne({
             _id: req.params.id
-        }).lean();
+        }).lean({virtuals: true});
     
         if(!information){
             return res.render('error/404.hbs');
@@ -223,25 +211,33 @@ router.get('/edit/:id', ensureAuth, async (req, res) => {
 
 //Update information
 router.put('/:id', ensureAuth, async (req, res) => {
-    try{
-        let information = await Information.findById(req.params.id).lean();
+    try {
+        const information = await Information.findOne({_id: req.params.id}).lean();
+        const cover = saveEditCover(information, req.body.cover);
 
-        if(!information){
-            return res.render('error/404.hbs');
-        }
-
-        if(information.user != req.user.id){
+        if (information.user != req.user.id) {
             res.redirect('/informations');
-        }else{
-            information = await Information.findOneAndUpdate({_id: req.params.id}, req.body, {
-                new: true,
-                runValidators: true
-            });
-        }
+        } else {
+            req.body.body = stripTags(req.body.body);
+            const updateInfo = {
+                title: req.body.title,
+                keyword: req.body.keyword,
+                body: req.body.body,
+                status: req.body.status,
+                user: req.user.id,
+                coverImage: cover.coverImage,
+                coverImageType: cover.coverImageType
+            }
 
-        res.redirect('/dashboard');
+            await Information.updateOne({_id: req.params.id}, updateInfo, {
+                new: true,
+                runValidators: true,
+            });
+        
+            res.redirect('/dashboard')
+        }
     } catch(err){
-        console.error(err);
+        console.log(err);
         return res.render('error/500.hbs');
     }
 });
@@ -294,5 +290,32 @@ router.get('/user/:userId', ensureAuth, async (req, res) => {
         return res.render('error/500.hbs');
     }
 });
+
+function saveCover(information, coverEncoded) {
+    if (coverEncoded == '') return;
+    
+    coverEncoded = stripTags(coverEncoded);
+    const cover = JSON.parse(coverEncoded);
+    if (cover != null && imageMimeTypes.includes(cover.type)) {
+        information.coverImage = new Buffer.from(cover.data, 'base64');
+        information.coverImageType = cover.type;
+    }
+}
+
+function saveEditCover(information, coverEncoded) {
+    if (coverEncoded == ''){
+        let coverImage = information.coverImage;
+        let coverImageType = information.coverImageType;
+        return {coverImage, coverImageType};
+    } else{
+        coverEncoded = stripTags(coverEncoded);
+        const cover = JSON.parse(coverEncoded);
+        if (cover != null && imageMimeTypes.includes(cover.type)) {
+            let coverImage = new Buffer.from(cover.data, 'base64');
+            let coverImageType = cover.type;
+            return {coverImage, coverImageType};
+        }
+    }
+}
 
 module.exports = router;

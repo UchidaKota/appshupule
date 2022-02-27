@@ -6,9 +6,9 @@
         <div class="card information">
             <div class="card-content">
                 <span class="card-title">{{formatDate information.createdAt 'MMMM Do YYYY, h:mm:ss a'}}</span>
-                {{{information.body}}}
+                <p>{{{information.body}}}</p>
+                <img class="responsive-img" src="{{information.coverImagePath}}">
             </div>
-            <img class="responsive-img" src="{{information.coverImagePath}}">
         </div>
     </div>
     <div class="col s12 m4">

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const InformationSchema = new mongoose.Schema({
     title: {
@@ -24,12 +25,10 @@ const InformationSchema = new mongoose.Schema({
       ref: 'User',
     },
     coverImage: {
-      type: Buffer,
-      required: true
+      type: Buffer
     },
     coverImageType: {
-      type: String,
-      required: true
+      type: String
     },
     viewUsers:{
       type:Array,
@@ -46,6 +45,8 @@ InformationSchema.virtual('coverImagePath').get(function() {
         return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`;
     }
 });
+
+InformationSchema.plugin(mongooseLeanVirtuals);
 
 
 module.exports = mongoose.model('Information', InformationSchema);
