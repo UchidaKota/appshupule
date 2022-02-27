@@ -1,6 +1,8 @@
 const router = require('express').Router();
+const upload = require('express-fileupload');
 const {ensureAuth} = require('../middleware/auth');
 const {stripTags} = require('../helpers/hbs');
+const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif']
 
 const Information = require('../model/Information');
 const Comment = require('../model/Comment');
@@ -20,16 +22,36 @@ router.get('/add', ensureAuth, (req, res) => {
 
 //Process add form
 router.post('/add/result', ensureAuth, async (req, res) => {
-    try{
-        req.body.user = req.user.id;
-        req.body.body = stripTags(req.body.body);
-        await Information.create(req.body);
+    req.body.body = stripTags(req.body.body);
+    const information = new Information({
+        title: req.body.title,
+        keyword: req.body.keyword,
+        body: req.body.body,
+        status: req.body.status,
+        user: req.user.id
+    });
+    saveCover(information, req.body.cover);
+
+    try {
+        await information.save();
         res.redirect('/dashboard');
     } catch(err){
         console.log(err);
         return res.render('error/500.hbs');
     }
 });
+
+function saveCover(information, coverEncoded) {
+    if (coverEncoded == null) return;
+
+    const cover = JSON.parse(coverEncoded);
+    console.log(cover.data);
+    if (cover != null && imageMimeTypes.includes(cover.type)) {
+        information.coverImage = new Buffer.from(cover.data, 'base64');
+        information.coverImageType = cover.type;
+    }
+  }
+  
 
 //Show all informations
 router.get('/', ensureAuth, async (req, res) => {
@@ -104,7 +126,6 @@ router.post('/', ensureAuth, async (req, res) => {
 router.get('/:id', ensureAuth, async (req, res) => {
     try {
         let informationViewSet = await Information.findOne({_id: req.params.id});
-        console.log(informationViewSet);
         
         //記事の主はノーカン
         if(informationViewSet.user._id != req.user.id){
@@ -112,33 +133,27 @@ router.get('/:id', ensureAuth, async (req, res) => {
         }
 
         let informationViewPop = await Information.findOne({_id: req.params.id});
-        console.log(informationViewPop);
         
-        console.log(informationViewPop.viewUsers.length);
          //最大3人まで
         if(informationViewPop.viewUsers.length > 3){
             await informationViewPop.updateOne({$pop: {viewUsers: -1}});
         }
 
         const information = await Information.findById(req.params.id).populate('user').lean();
-        console.log(information);
         if (!information) {
             return res.render('error/404.hbs');
         }
 
         const viewUsers = await User.find({_id: {$in: information.viewUsers}}).lean();
-        console.log(viewUsers);
         if (!viewUsers) {
             return res.render('error/404.hbs');
         }
 
         const comment = await Comment.find({information: req.params.id}).populate('user').lean();
-        console.log(comment);
         if (!comment) {
             return res.render('error/404.hbs');
         }
 
-        console.log(req.user);
         if(req.user.followings.includes(information.user._id)){
             msg = "フォロー中";
         }else {
@@ -146,7 +161,6 @@ router.get('/:id', ensureAuth, async (req, res) => {
         }
 
         const loggedUser = await User.findById({_id: req.user.id}).lean();
-        console.log(loggedUser);
 
         if(req.session.channel === 'all'){
             res.render('informations/show.hbs', {

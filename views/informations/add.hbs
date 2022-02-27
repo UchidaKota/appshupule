@@ -1,3 +1,4 @@
+<script defer src="/js/fileUpload.js"></script>
 <h3>IT情報登録</h3>
 <div class="row">
     <form action="/informations/add/result" method="POST" class="col s12">
@@ -30,6 +31,11 @@
                 <h5>内容：</h5>
                 <textarea id="body" name="body"></textarea>
             </div>
+        </div>
+
+        <div>
+            <label>Cover</label>
+            <input type="file" name="cover" class="filepond">
         </div>
 
         <div class="row">

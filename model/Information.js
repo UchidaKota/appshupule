@@ -23,6 +23,14 @@ const InformationSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    coverImage: {
+      type: Buffer,
+      required: true
+    },
+    coverImageType: {
+      type: String,
+      required: true
+    },
     viewUsers:{
       type:Array,
       default:[],
@@ -32,5 +40,12 @@ const InformationSchema = new mongoose.Schema({
       default: Date.now,
     }
 });
+
+InformationSchema.virtual('coverImagePath').get(function() {
+    if (this.coverImage != null && this.coverImageType != null) {
+        return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`;
+    }
+});
+
 
 module.exports = mongoose.model('Information', InformationSchema);
