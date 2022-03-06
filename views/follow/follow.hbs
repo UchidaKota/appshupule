@@ -1,24 +1,3 @@
-<h3>フォロー中</h3>
-{{#if followUsers}}
-<table class="striped">
-    <tbody>
-        {{#each followUsers}}
-        <tr>
-            <td><img src="{{image}}" class="circle"></td>
-            <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
-            <td>
-                <form action="" method="POST">
-                    <input id="{{_id}}" type="button" value="フォロー中" class="btn" onclick="follow(this.id)">
-                </form>
-            </td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
-{{else}}
-<p>まだ誰もフォローしていません</p>
-{{/if}}
-<br>
 <h3>あなたへのおすすめ</h3>
 {{#if unFollowUsers}}
 <table class="striped">
@@ -38,6 +17,27 @@
 </table>
 {{else}}
 <p>他にユーザーはいません</p>
+{{/if}}
+<br>
+<h3>フォロー中</h3>
+{{#if followUsers}}
+<table class="striped">
+    <tbody>
+        {{#each followUsers}}
+        <tr>
+            <td><img src="{{image}}" class="circle"></td>
+            <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
+            <td>
+                <form action="" method="POST">
+                    <input id="{{_id}}" type="button" value="フォロー中" class="btn" onclick="follow(this.id)">
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{else}}
+<p>まだ誰もフォローしていません</p>
 {{/if}}
 
 <script> 

@@ -22,8 +22,8 @@
                 {{{editIcon user ../user _id}}}
             </div>
             <div class="card-content center-align">
-                <h5>{{title}}</h5>
-                <p>{{stripTags (truncate body 70)}}</p>
+                <h5 class="max-1-lines">{{title}}</h5>
+                <p class="max-4-lines">{{body}}</p>
                 <br>
                 <div class="chip">
                     <img src="{{user.image}}" alt="">

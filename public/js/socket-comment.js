@@ -25,4 +25,5 @@ socketio.on('s2c-chat', function(msg){
     console.log('ソケットs2c-chat1:' + msg.userId + ' ' + msg.comment);
     li.innerHTML = '<div class="col s2"><img src="'+msg.userInfo.userImage+'" class="circle chatimg"></div><div class="col s10"><span class="font-small">'+msg.userInfo.userName+'</span><br>'+msg.comment+'</div>';
     ul.appendChild(li);
+    ul.scrollTo(0, ul.scrollHeight);
 });

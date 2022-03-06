@@ -7,7 +7,7 @@
                 {{#each chats}}
                     <li class="row">
                         <div class="col s2"><img src="{{user.image}}" class="circle chatimg"></div>
-                        <div class="col s10"><span class="font-small">{{user.displayName}}</span><br>{{message}}</div>
+                        <div class="col s10"><span class="font-small">{{user.displayName}}　{{{TimeRanges createdAt}}}</span><br>{{message}}</div>
                     </li>
                 {{else}}
                     <p>さっそく会話をしましょう</p>
@@ -33,7 +33,7 @@
             <tbody>
                 {{#each channelUsers}}
                 <tr>
-                    <td><img src="{{image}}" class="circle"></td>
+                    <td><img src="{{image}}" class="circle chatimg"></td>
                     <td><a href="/informations/user/{{_id}}">{{displayName}}</a></td>
                 </tr>
                 {{/each}}

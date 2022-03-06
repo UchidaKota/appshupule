@@ -34,16 +34,16 @@ app.use(methodOverride(function (req, res) {
 }));
 
 //Handlebars Helpers
-const {formatDate, truncate, stripTags, editIcon, select} = require('./helpers/hbs');
+const {formatDate, stripTags, editIcon, select, TimeRanges} = require('./helpers/hbs');
 
 //Handlebarsaa
 app.engine('.hbs', engine({
     helpers: {
         formatDate,
-        truncate,
         stripTags,
         editIcon,
-        select
+        select,
+        TimeRanges
     }, 
     defaulyLayout: 'main', extname: '.hbs'}));
 app.set('view engine', '.hbs');
@@ -104,6 +104,7 @@ io_socket.on('connection', function(socket){
     });
     socket.on('channel-chat', function(msg){
         const Chat = require('./model/Chat');
+        const {TimeRanges} = require('./helpers/hbs');
         console.log(msg.userInfo);
         values = {
             channel: msg.channelId,
@@ -114,6 +115,8 @@ io_socket.on('connection', function(socket){
 
         Chat.create(values);
 
-        io_socket.to(msg.channelId).emit('channel-chat', msg);
+        let date = new Date();
+        time = TimeRanges(date);
+        io_socket.to(msg.channelId).emit('channel-chat', msg, time);
     });
 });

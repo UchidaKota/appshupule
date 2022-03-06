@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const upload = require('express-fileupload');
 const {ensureAuth} = require('../middleware/auth');
 const {stripTags} = require('../helpers/hbs');
 const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif']

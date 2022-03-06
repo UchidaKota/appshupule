@@ -1,6 +1,11 @@
+body{
+    padding-top: 50px; /* ヘッダーの後ろに要素が隠れないようにするため */
+}
+
 p {
     margin: 10px 0;
 }
+
 
 .login-container {
     width: 400px;
@@ -39,4 +44,34 @@ p {
 }
 .row.m-flex.m-flex .col:not([class*="offset-"]){
     margin-left: unset; /* 元々ついているmargin-left: autoを解除 */
+}
+
+.max-4-lines{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.max-1-lines{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.fixed{
+    z-index: 999;
+    position: fixed; /* ウィンドウを基準に画面に固定 */
+    top: 0; /* 上下の固定位置を上から0pxにする */
+    left: 0; /* 左右の固定位置を左から0pxにする */
+}
+
+#messages{
+    width: 100%;
+    height: 70vh;
+    overflow: auto;
+    overflow-x: hidden;
 }
